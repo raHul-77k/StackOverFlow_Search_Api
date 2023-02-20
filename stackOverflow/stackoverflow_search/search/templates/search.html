@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Results - Stack Overflow{% endblock %}
+
+{% block content %}
+    <form action="{% url 'search:search' %}" method="get">
+        <input type="text" name="q" value="{{ request.GET.q }}">
+        <input type="submit" value="Search">
+    </form>
+    {% if results %}
+        <ul>
+        {% for result in results %}
+            <li><span class="arrow">&#10148;</span> <a href="{{ result.link }}"><strong>{{ result.title }}</strong></a></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+
+    {% if questions %}
+        <p>Search results for "{{ request.GET.q }}":</p>
+    <ul>
+    {% for question in questions %}
+        <li><span class="arrow">&#10148;</span> <a href="{{ question.link }}"><strong>{{ question.title }}</strong></a></li>
+    {% endfor %}
+    </ul>
+    <div class="pagination">
+        <span class="step-links">
+            {% if questions.has_previous %}
+                <a href="?q={{ request.GET.q }}&amp;page=1">&laquo; first</a>
+                <a href="?q={{ request.GET.q }}&amp;page={{ questions.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current-page">
+                Page {{ questions.number }} of {{ questions.paginator.num_pages }}.
+            </span>
+    
+            {% if questions.has_next %}
+                <a href="?q={{ request.GET.q }}&amp;page={{ questions.next_page_number }}">next</a>
+                <a href="?q={{ request.GET.q }}&amp;page={{ questions.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+{% endblock %}
+
+<style>
+    .arrow {
+        margin-right: 10px;
+        font-size: 1.2em;
+        color: #666;
+    }
+
+    strong {
+        font-weight: bold;
+    }
+</style>
